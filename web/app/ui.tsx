@@ -18,10 +18,17 @@ export function PartnerForm({ endpoint = '/api/partner/application' }: { endpoin
   const [message, setMessage] = useState('');
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const body = Object.fromEntries(new FormData(event.currentTarget));
+    const formData = new FormData(event.currentTarget);
+    const body = Object.fromEntries(formData);
     const response = await fetch(endpoint, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...body, openingHours: [], role: undefined }) });
     const data = await response.json();
+    if (response.ok && formData.getAll('documents').some((file) => file instanceof File && file.size > 0)) {
+      const uploadData = new FormData();
+      formData.getAll('documents').forEach((file) => uploadData.append('documents', file));
+      const uploadResponse = await fetch('/api/partner/application/documents', { method: 'POST', credentials: 'include', body: uploadData });
+      if (!uploadResponse.ok) { setMessage((await uploadResponse.json()).error); return; }
+    }
     setMessage(response.ok ? 'Enregistré. Votre dossier est en attente de validation.' : data.error);
   }
-  return <form className="form" onSubmit={submit}><input name="name" placeholder="Nom de la boutique" required/><textarea name="description" placeholder="Description" required/><input name="address" placeholder="Adresse" required/><select name="zone" defaultValue="Souk"><option>Bab Bhar</option><option>Bab Jdid</option><option>Souk</option><option>Other</option></select><input name="phone" placeholder="Téléphone" required/><input name="nationalIdNumber" placeholder="Numéro CIN" required/><input name="commercialRegisterNumber" placeholder="Registre de commerce" required/><button>Enregistrer la demande</button>{message && <Notice>{message}</Notice>}</form>;
+  return <form className="form" onSubmit={submit}><input name="name" placeholder="Nom de la boutique" required/><textarea name="description" placeholder="Description" required/><input name="address" placeholder="Adresse" required/><select name="zone" defaultValue="Souk"><option>Bab Bhar</option><option>Bab Jdid</option><option>Souk</option><option>Other</option></select><input name="phone" placeholder="Téléphone" required/><input name="nationalIdNumber" placeholder="Numéro CIN" required/><input name="commercialRegisterNumber" placeholder="Registre de commerce" required/><input name="documents" type="file" accept="image/jpeg,image/png,image/webp" multiple/><button>Enregistrer la demande</button>{message && <Notice>{message}</Notice>}</form>;
 }
