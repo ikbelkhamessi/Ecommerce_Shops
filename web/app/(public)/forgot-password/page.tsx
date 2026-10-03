@@ -1,0 +1,3 @@
+'use client';
+import { useState } from 'react';
+export default function ForgotPassword() { const [message, setMessage] = useState(''); async function submit(e: React.FormEvent<HTMLFormElement>) { e.preventDefault(); const body = Object.fromEntries(new FormData(e.currentTarget)); const r = await fetch('/api/auth/forgot-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); setMessage((await r.json()).message); } return <><h1>Mot de passe oublié</h1><form className="form" onSubmit={submit}><input name="email" type="email" placeholder="Votre email" required/><button>Envoyer le lien</button>{message && <p>{message}</p>}</form></>; }

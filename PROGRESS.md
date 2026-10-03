@@ -11,3 +11,9 @@
 - [x] Admin application review and catalog management API surface
 - [x] Seed accounts and settings document
 - [x] CI, lint, typecheck, and service tests
+
+## Implemented routes
+
+- Public: `/`, `/product/[id]`, `/shop/[slug]`, `/favorites`, `/profile`, `/login`, `/register`, `/forgot-password`, `/reset-password`
+- Partner: `/partner/application`, `/partner/sections`, `/partner/products`, `/partner/pickup`, `/partner/profile`
+- Admin: `/admin/dashboard`, `/admin/applications`, `/admin/shops`, `/admin/users`, `/admin/products`, `/admin/audit-log`

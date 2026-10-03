@@ -1,0 +1,1 @@
+export default function PartnerPickup() { return <><h1>Horaires et retrait</h1><p>Définissez les horaires d&apos;ouverture de votre boutique dans votre demande.</p><section className="card"><h2>Points de retrait</h2><p className="muted">Les points de retrait seront disponibles dans la Partie 2.</p></section></>; }
