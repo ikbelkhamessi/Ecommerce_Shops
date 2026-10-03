@@ -11,6 +11,8 @@ npm install --prefix web
 
 Copy `server/.env.example` to `server/.env` and `web/.env.example` to `web/.env.local`, then run `npm run dev` in each directory. The web app is available at `http://localhost:3000` and the API at `http://localhost:4000`.
 
+Cloudinary uploads require `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` in `server/.env`. Uploads accept JPEG, PNG, and WebP files up to 3 MB and are stored under the shop/product folders.
+
 ## Test accounts
 
 | Role | Email | Password | State |
