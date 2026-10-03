@@ -23,6 +23,17 @@ Cloudinary uploads require `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `C
 
 Never commit `server/.env`; it is excluded by `.gitignore`.
 
+### Adding accounts without deleting existing data
+
+- Clients and partners can use `/register`; choose the account type in the form. A partner must then complete `/partner/application` and wait for admin approval.
+- To create or promote an admin without deleting any users, run:
+
+```powershell
+npm run create-admin --prefix server -- admin@example.com "Use-a-strong-password" "Admin Name"
+```
+
+This command is idempotent. It promotes an existing account with that email to `admin` and updates its password. Do not use `npm run seed --prefix server` for this purpose: `seed` clears users, shops, and products before inserting demo data.
+
 ## Gmail/Google sign-in setup
 
 1. Open [Google Cloud Console](https://console.cloud.google.com/), create/select a project, configure the OAuth consent screen, and add yourself as a test user while the app is in testing.
