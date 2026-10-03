@@ -20,9 +20,10 @@ export async function login(identifier: string, password: string) {
   return { user, ...issueTokens(user) };
 }
 export async function loginWithGoogle(idToken: string, role: 'client' | 'partner' = 'client') {
-  if (!process.env.GOOGLE_CLIENT_ID) throw new Error('Google sign-in is not configured');
-  const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-  const ticket = await client.verifyIdToken({ idToken, audience: process.env.GOOGLE_CLIENT_ID });
+  const googleClientId = process.env.GOOGLE_CLIENT_ID ?? process.env.VITE_GOOGLE_CLIENT_ID;
+  if (!googleClientId) throw new Error('Google sign-in is not configured');
+  const client = new OAuth2Client(googleClientId);
+  const ticket = await client.verifyIdToken({ idToken, audience: googleClientId });
   const payload = ticket.getPayload();
   if (!payload?.sub || !payload.email || payload.email_verified !== true) throw new Error('Google account email is not verified');
   let user = await User.findOne({ $or: [{ googleId: payload.sub }, { email: payload.email.toLowerCase() }] });
