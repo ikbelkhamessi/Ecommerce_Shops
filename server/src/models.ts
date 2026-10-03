@@ -1,0 +1,21 @@
+import { Schema, model, type InferSchemaType } from 'mongoose';
+
+const openingHour = new Schema({ weekday: { type: Number, min: 0, max: 6 }, opensAt: String, closesAt: String, isClosed: Boolean }, { _id: false });
+const documentSchema = new Schema({ url: String, type: String }, { _id: false });
+const userSchema = new Schema({ email: { type: String, unique: true, sparse: true, lowercase: true }, phone: String, passwordHash: { type: String, required: true }, fullName: { type: String, required: true }, locale: { type: String, default: 'fr' }, roles: { type: [String], default: ['client'] }, status: { type: String, default: 'active', enum: ['active', 'suspended'] }, emailVerifiedAt: Date }, { timestamps: true });
+const shopSchema = new Schema({ ownerId: { type: Schema.Types.ObjectId, ref: 'User', required: true }, name: { type: String, required: true }, slug: { type: String, unique: true, required: true }, description: String, logoUrl: String, address: String, zone: { type: String, enum: ['Bab Bhar', 'Bab Jdid', 'Souk', 'Other'] }, phone: String, nationalIdNumber: String, commercialRegisterNumber: String, documents: [documentSchema], status: { type: String, enum: ['PENDING', 'APPROVED', 'REJECTED', 'SUSPENDED'], default: 'PENDING' }, rejectionReason: String, reviewedBy: Schema.Types.ObjectId, reviewedAt: Date, openingHours: [openingHour], sections: [{ name: String, sortOrder: Number }], specialities: [String], pickupPoints: { type: [Schema.Types.Mixed], default: [] } }, { timestamps: true });
+const productSchema = new Schema({ shopId: { type: Schema.Types.ObjectId, ref: 'Shop', required: true, index: true }, sectionId: Schema.Types.ObjectId, name: { type: String, required: true }, description: String, price: { type: Number, required: true, min: 0 }, oldPrice: Number, stock: { type: Number, default: 0, min: 0 }, status: { type: String, enum: ['ACTIVE', 'INACTIVE'], default: 'ACTIVE', index: true }, images: [documentSchema], options: [{ name: String, values: [String] }] }, { timestamps: true });
+productSchema.index({ name: 'text', description: 'text' });
+const favoriteSchema = new Schema({ userId: Schema.Types.ObjectId, shopId: Schema.Types.ObjectId, productId: Schema.Types.ObjectId }, { timestamps: true });
+const notificationSchema = new Schema({ userId: Schema.Types.ObjectId, type: String, title: String, body: String, link: String, readAt: Date }, { timestamps: true });
+const auditSchema = new Schema({ actorId: Schema.Types.ObjectId, action: String, entity: String, entityId: Schema.Types.ObjectId, meta: Schema.Types.Mixed }, { timestamps: true });
+const settingSchema = new Schema({ _id: { type: String, default: 'global' }, commissionRate: Number, orderExpiryHours: Number, pickupWindow: { from: String, to: String }, inShopWindow: { from: String, to: String }, cancellationHours: Number });
+shopSchema.index({ status: 1 });
+export const User = model('User', userSchema);
+export const Shop = model('Shop', shopSchema);
+export const Product = model('Product', productSchema);
+export const Favorite = model('Favorite', favoriteSchema);
+export const Notification = model('Notification', notificationSchema);
+export const AuditLog = model('AuditLog', auditSchema);
+export const Setting = model('Setting', settingSchema);
+export type UserDocument = InferSchemaType<typeof userSchema>;

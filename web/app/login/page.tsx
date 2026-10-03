@@ -1,0 +1,3 @@
+'use client';
+import { useState } from 'react';
+export default function Login(){const [error,setError]=useState('');async function submit(e:React.FormEvent<HTMLFormElement>){e.preventDefault();const body=Object.fromEntries(new FormData(e.currentTarget));const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(body)});if(r.ok) location.href='/';else setError((await r.json()).error)}return <><h1>Connexion</h1><form className="form" onSubmit={submit}><input name="email" type="email" placeholder="Email" required/><input name="password" type="password" placeholder="Mot de passe" required/><button>Se connecter</button>{error&&<p role="alert">{error}</p>}</form></>}
